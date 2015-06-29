@@ -22,7 +22,7 @@ var (
 
 func readData(c net.Conn, pb proto.Message) (err error) {
 	sbytes := make([]byte, MsgSizeSize, MsgSizeSize)
-	sbuff := bytes.NewBuffer(sbytes)
+	sbuff := bytes.NewReader(sbytes)
 
 	n, err := c.Read(sbytes)
 	if err != nil {
@@ -31,7 +31,8 @@ func readData(c net.Conn, pb proto.Message) (err error) {
 		return ErrBytesRead
 	}
 
-	sz, err := binary.ReadVarint(sbuff)
+	var sz int64
+	err = binary.Read(sbuff, binary.BigEndian, &sz)
 	if err != nil {
 		return err
 	}
@@ -52,15 +53,19 @@ func readData(c net.Conn, pb proto.Message) (err error) {
 }
 
 func writeData(c net.Conn, pb proto.Message) (err error) {
-	sbytes := make([]byte, MsgSizeSize, MsgSizeSize)
 	dbytes, err := proto.Marshal(pb)
 	if err != nil {
 		return err
 	}
 
 	sz := int64(len(dbytes))
-	binary.PutVarint(sbytes, sz)
+	sbuff := new(bytes.Buffer)
+	err = binary.Write(sbuff, binary.BigEndian, sz)
+	if err != nil {
+		return err
+	}
 
+	sbytes := sbuff.Bytes()
 	n, err := c.Write(sbytes)
 	if n != MsgSizeSize {
 		return ErrBytesWrite
