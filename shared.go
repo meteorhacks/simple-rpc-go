@@ -42,11 +42,15 @@ func readData(c net.Conn, pb proto.Message) (err error) {
 	}
 
 	dbytes := make([]byte, sz, sz)
-	n, err = c.Read(dbytes)
-	if err != nil {
-		return err
-	} else if int64(n) != sz {
-		return ErrBytesRead
+	toRead := dbytes[:]
+
+	for len(toRead) > 0 {
+		n, err = c.Read(toRead)
+		if err != nil {
+			return err
+		}
+
+		toRead = toRead[n:]
 	}
 
 	return proto.Unmarshal(dbytes, pb)
