@@ -75,9 +75,14 @@ func writeData(c net.Conn, pb proto.Message) (err error) {
 		return ErrBytesWrite
 	}
 
-	n, err = c.Write(dbytes)
-	if int64(n) != sz {
-		return ErrBytesWrite
+	toWrite := dbytes[:]
+	for len(toWrite) > 0 {
+		n, err = c.Write(toWrite)
+		if err != nil {
+			return err
+		}
+
+		toWrite = toWrite[n:]
 	}
 
 	return nil
