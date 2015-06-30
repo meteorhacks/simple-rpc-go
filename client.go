@@ -91,6 +91,7 @@ func (c *client) handleResponse(res *Response) {
 		return
 	}
 
+	delete(c.mcalls, res.Id)
 	ch <- res
 }
 
