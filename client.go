@@ -82,6 +82,12 @@ func (c *client) handleConnection() {
 
 		go c.handleResponse(res)
 	}
+
+	for id, ch := range c.mcalls {
+		res := &Response{Error: "connection lost"}
+		delete(c.mcalls, id)
+		ch <- res
+	}
 }
 
 func (c *client) handleResponse(res *Response) {
