@@ -11,6 +11,7 @@ import (
 
 const (
 	MsgSizeSize = 8
+	MsgSizeMax  = 1024 * 1024 * 16
 )
 
 var (
@@ -37,8 +38,8 @@ func readData(c net.Conn, pb proto.Message) (err error) {
 		return err
 	}
 
-	if sz < 0 {
-		return err
+	if sz < 0 || sz > MsgSizeMax {
+		return ErrMessageSz
 	}
 
 	dbytes := make([]byte, sz, sz)
