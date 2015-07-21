@@ -6,7 +6,7 @@ import (
 
 	_ "net/http/pprof"
 
-	"github.com/meteorhacks/simple-rpc-go"
+	"github.com/meteorhacks/simple-rpc-go/srpc"
 )
 
 const (

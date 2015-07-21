@@ -8,7 +8,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"github.com/meteorhacks/simple-rpc-go"
+	"github.com/meteorhacks/simple-rpc-go/srpc"
 )
 
 var (
