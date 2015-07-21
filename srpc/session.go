@@ -206,7 +206,7 @@ func (s *session) handleRequest(req *Request) {
 }
 
 func (s *session) read() (msg *Message, err error) {
-	var msgSize int64
+	var msgSize uint32
 	err = binary.Read(s.connection, binary.LittleEndian, &msgSize)
 	if err != nil {
 		return nil, err
@@ -250,7 +250,7 @@ func (s *session) write(msg *Message) (err error) {
 	s.writeMutx.Lock()
 	defer s.writeMutx.Unlock()
 
-	msgSize := int64(len(buffer))
+	msgSize := uint32(len(buffer))
 	err = binary.Write(s.connection, binary.LittleEndian, msgSize)
 	if err != nil {
 		return err
